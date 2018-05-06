@@ -1,0 +1,26 @@
+{
+  "name": "map-spider-demo",
+  "version": "1.0.0",
+  "description": "a map spider for map",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node src/index.js",
+    "test": "babel-node src/test.js"
+  },
+  "keywords": [
+    "map",
+    "spider"
+  ],
+  "author": "pc",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.6.1"
+  },
+  "dependencies": {
+    "async": "^2.6.0",
+    "superagent": "^3.8.3",
+    "tile-lnglat-transform": "^1.3.2"
+  }
+}
