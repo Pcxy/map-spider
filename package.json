@@ -4,8 +4,12 @@
   "description": "a map spider for map",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node src/index.js",
-    "test": "babel-node src/test.js"
+    "start": "babel src -d lib && node lib/index.js",
+    "test1": "babel-node test/test.js",
+    "test": "jest",
+    "build": "babel src -d lib",
+    "server": "forever start lib/index.js",
+    "stop": "forever stop lib/index.js"
   },
   "keywords": [
     "map",
@@ -16,11 +20,19 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.6.1"
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "jest": "^22.4.3",
+    "koa2-cors": "^2.0.5"
   },
   "dependencies": {
     "async": "^2.6.0",
+    "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.4.0",
     "superagent": "^3.8.3",
-    "tile-lnglat-transform": "^1.3.2"
+    "tile-lnglat-transform": "^1.3.2",
+    "winston": "^2.4.2"
   }
 }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Page Title</title>
+  <link rel="stylesheet" href="./css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/uikit.gradient.min.css"/>
+  <script src="./js/jquery-3.2.1.js"></script>
+  <script src="./js/uikit.min.js"></script>
+  <style>
+    .uk-width-1-2 {
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div id='container' class='uk-block uk-block-large' style='max-width: 900px; margin: auto'>
+    <div id='title' style="text-align: center">
+      <h1>百度地图抓取器</h1>
+    </div>
+    <hr class="uk-article-divider">
+    <form class="uk-form">
+      <div class="uk-grid">
+        <div class="uk-width-1-2"><input id='ak' type="text" placeholder="百度地图ak" value="WUPGA6Sx8MrHBrds4n48PfU8t4twHVIl" class="uk-width-1-1"/></div>
+        <div class="uk-width-1-2"><input id='theme' type="text" placeholder="百度地图theme" value="dark" class="uk-width-1-1"/></div>
+        <div class="uk-width-1-2"><input id='leftTopLng' type="text" placeholder="左上角坐标经度" value="118.443494" class="uk-width-1-1"/></div>
+        <div class="uk-width-1-2"><input id='leftTopLat' type="text" placeholder="左上角坐标维度" value="32.451448" class="uk-width-1-1"/></div>
+        <div class="uk-width-1-2"><input id='rightButtomLng' type="text" placeholder="右下角坐标经度" value="120.878261" class="uk-width-1-1"/></div>
+        <div class="uk-width-1-2"><input id='rightButtomLat' type="text" placeholder="右上角坐标维度" value="31.145358" class="uk-width-1-1"/></div>
+      </div>
+      <div style="align-items: center">
+        <button id='conformButton' class="uk-button" type="button" disabled>确定</button>
+        <div id='message' class="uk-alert"></div>
+      </div>
+    </form>
+  </div>
+</body>
+<script>
+  $(function () {
+    $.ajax('http://10.0.40.54:3000/api/status', {
+      dataType: 'json',
+      type: 'GET',
+      success: function (data) {
+        if (data) {
+          var isSpiding = data.isSpiding;
+          if (isSpiding) {
+            $('button#conformButton').attr('disabled');
+            $('div#message').append('正在抓取中...')
+          } else {
+            $('button#conformButton').removeAttr('disabled');
+          }
+        } else {
+          $('div#message').append('数据异常');
+        }
+      },
+      error: function (XMLHttpResponse, textStatus, t) {
+        $('div#message').append('请求出错');
+        console.log(textStatus, t);
+      }
+    });
+
+    $('input').each(function (index, ele) {
+      $(ele).blur(function () {
+        // console.log(this.value);
+        if (this.value.trim() === '') {
+          $(this).addClass('uk-form-danger');
+        }
+      });
+      $(ele).focus(function () {
+        $(this).removeClass('uk-form-danger');
+      })
+    })
+
+    $('button#conformButton').on('click', function() {
+      var ak = $('input#ak');
+      var theme = $('input#theme');
+      var leftTopLng = $('input#leftTopLng');
+      var leftTopLat = $('input#leftTopLat');
+      var rightButtomLng = $('input#rightButtomLng');
+      var rightButtomLat = $('input#rightButtomLat');
+      if (
+        ak.val().trim() === '' || theme.val().trim() === ''
+        || leftTopLng.val().trim() === '' || leftTopLat.val().trim() === ''
+        || rightButtomLng.val().trim() === '' || rightButtomLat.val().trim() === ''
+      ) {
+        alert('不能有空滴');
+        return;
+      }
+      try {
+        $.post('http://10.0.40.54:3000/api/set', {
+          ak: ak.val().trim(),
+          theme: theme.val().trim(),
+          leftTop: [parseFloat(leftTopLng.val().trim()), parseFloat(leftTopLat.val().trim())],
+          rightButtom: [parseFloat(rightButtomLng.val().trim()), parseFloat(rightButtomLat.val().trim())]
+        }, function (data) {
+          if (data && data.code === 0) {
+            $('div#message').append(data.message)
+          }
+        }, 'json');
+      } catch (e) {
+        $('div#message').append('坐标转换异常: ' + e);
+      }
+    })
+  })
+</script>
+</html>
